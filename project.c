@@ -43,14 +43,14 @@ int main(int argc, char **argv)
   {
     a[i] = (double *)_mm_malloc(ARRAY_SIZE*sizeof(double),256);
     for(j = 0; j < ARRAY_SIZE; j++)
-      a[i][j] = i+j;
+      a[i][j] = rand();
   }
   b = (double **)malloc(ARRAY_SIZE*sizeof(double *));
   for(i = 0; i < ARRAY_SIZE; i++)
   {
     b[i] = (double *)_mm_malloc(ARRAY_SIZE*sizeof(double),256);
     for(j = 0; j < ARRAY_SIZE; j++)
-      b[i][j] = i+j;
+      b[i][j] = rand();
   }
   c = (double **)malloc(ARRAY_SIZE*sizeof(double *));
   for(i = 0; i < ARRAY_SIZE; i++)
