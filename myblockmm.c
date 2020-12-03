@@ -25,8 +25,8 @@ void my_threaded_vector_blockmm(double **a, double **b, double **c, int n, int A
   int i=0;
   pthread_t *thread;
   struct thread_info *tinfo;
-  strcpy(name,"Please replace this with your name!");
-  strcpy(SID,"Please replace this with your SID!");
+  strcpy(name,"Winson Bi");
+  strcpy(SID,"861270715");
   thread = (pthread_t *)malloc(sizeof(pthread_t)*number_of_threads);
   tinfo = (struct thread_info *)malloc(sizeof(struct thread_info)*number_of_threads);
 
