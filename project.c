@@ -93,7 +93,7 @@ int main(int argc, char **argv)
     {
       if(c[i][j]!=c_correct[i][j])
       {
-        printf("Verification Failed!\n");
+        printf("Verification Failed for c[i][j] = c [%d] [%d] !\n",i,j);
         return 1;
       }
     }
