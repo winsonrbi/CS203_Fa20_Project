@@ -1,3 +1,6 @@
+//Addeed for cpu affinity
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,7 +9,9 @@
 #include <sys/time.h>
 #include <pthread.h>
 #include "myblockmm.h"
+//Added for cpu affinity
 
+#include <sched.h>
 struct thread_info
 {
     int tid;
