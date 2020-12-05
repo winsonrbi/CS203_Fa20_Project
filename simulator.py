@@ -1,7 +1,7 @@
-def loop_simulation(LOOPS = 11):
+def loop_simulation(LOOPS = 11,thread = 0):
     ARRAY_SIZE = 4096
     n = 512
-    tid = 0
+    tid = thread
     number_of_threads = 4
     loop_count = 0
     VECTOR_WIDTH = 4
@@ -29,4 +29,5 @@ def loop_simulation(LOOPS = 11):
 
 if __name__ == "__main__":
     loops = int(input("Enter Number of Loops: "))
-    loop_simulation(loops)
+    thread = int(input("Enter which thread you want to simulate: "))
+    loop_simulation(LOOPS = loops, thread = thread)
