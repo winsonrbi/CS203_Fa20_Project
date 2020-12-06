@@ -14,6 +14,9 @@ int main(int argc, char **argv)
   int number_of_threads = 4;
   int n = 512;
   int VECTOR_WIDTH = 4;
+
+  int max_a = 0;
+  int max_b = 0;
   for(i = (ARRAY_SIZE/number_of_threads)*(tid); i < (ARRAY_SIZE/number_of_threads)*(tid+1); i+=ARRAY_SIZE/n)
   {
     for(j = 0; j < ARRAY_SIZE; j+=(ARRAY_SIZE/n))
@@ -28,15 +31,23 @@ int main(int argc, char **argv)
                 {
 		  if(ii == 0 && kk ==0){
 		    a_access_count = a_access_count + 1;
+                    if(a_stride_count > max_a){
+                      max_a = a_stride_count;
+		    }
+	            a_stride_count = 0; 
 		  }	
+		  else{
+                    a_stride_count = a_stride_count + 1;
+		  }
 		  if(kk == 0 && jj == 0){
     	            b_access_count = b_access_count + 1;
+		    if(b_stride_count > max_b){
+		      max_b = b_stride_count;
+                    }
+                    b_stride_count = 0;
 		  }	
-                  if(b_access_count == 1){
+                  else{
  		    b_stride_count = b_stride_count + 1;
-		  }
-		  if(a_access_count == 7){
-                    a_stride_count = a_stride_count + 1;
 		  }
                 }
             }
@@ -44,6 +55,6 @@ int main(int argc, char **argv)
       }
     }
   }  
-  fprintf(stdout, "Access count for b[0][0] is %d, stride between accesses is %d\n", b_access_count, b_stride_count);
-  fprintf(stdout, "Access count for a[0][0] is %d, stride between accesses is %d\n", a_access_count, a_stride_count);
+  fprintf(stdout, "Access count for b[0][0] is %d, max stride between accesses is %d\n", b_access_count, max_b);
+  fprintf(stdout, "Access count for a[0][0] is %d, max stride between accesses is %d\n", a_access_count, max_a);
 }
