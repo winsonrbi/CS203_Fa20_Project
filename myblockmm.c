@@ -60,6 +60,10 @@ void *mythreaded_vector_blockmm(void *t)
   double **c = tinfo.c;
   int ARRAY_SIZE = tinfo.array_size;
   int n = tinfo.n;
+  if(ARRAY_SIZE >= 256)
+  {
+    n = ARRAY_SIZE/64;
+  }
   for(i = (ARRAY_SIZE/number_of_threads)*(tid); i < (ARRAY_SIZE/number_of_threads)*(tid+1); i+=ARRAY_SIZE/n)
   {
     for(j = 0; j < ARRAY_SIZE; j+=(ARRAY_SIZE/n))
