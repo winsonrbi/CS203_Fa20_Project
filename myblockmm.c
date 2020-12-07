@@ -62,20 +62,20 @@ void *mythreaded_vector_blockmm(void *t)
   int number_of_threads = tinfo.number_of_threads;
   int tid =  tinfo.tid;
   int s;
-  cpu_set_t cpuset;
-  CPU_ZERO(&cpuset);
-  CPU_SET(tid, &cpuset);
-  pthread_t thread = pthread_self();
-  pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
-  s = pthread_getaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
-  if (s != 0) 
-  {
-    fprintf(stderr, "Uh oh we didn't set the cpu affinity for our threads\n");
-  }
-  else
-  {
-    fprintf(stderr, "CPU set for thread %d\n", tid);
-  }
+  //cpu_set_t cpuset;
+  //CPU_ZERO(&cpuset);
+  //CPU_SET(tid, &cpuset);
+  //pthread_t thread = pthread_self();
+  //pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
+  //s = pthread_getaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
+  //if (s != 0) 
+  //{
+  //  fprintf(stderr, "Uh oh we didn't set the cpu affinity for our threads\n");
+  //}
+  //else
+  //{
+  //  fprintf(stderr, "CPU set for thread %d\n", tid);
+  //}
   double **a = tinfo.a;
   double **b = tinfo.b;
   double **c = tinfo.c;
@@ -92,6 +92,7 @@ void *mythreaded_vector_blockmm(void *t)
          {
             for(jj = j; jj < j+(ARRAY_SIZE/n); jj+=VECTOR_WIDTH)
             {
+		    _mm_prefetch(&a[ii][kk],_MM_HINT_T0);
                     vc[0] = _mm256_load_pd(&c[ii][jj]);
                     vc[1] = _mm256_load_pd(&c[ii+1][jj]);
                     vc[2] = _mm256_load_pd(&c[ii+2][jj]);
@@ -110,6 +111,7 @@ void *mythreaded_vector_blockmm(void *t)
                         vc[3] = _mm256_add_pd(vc[3],_mm256_mul_pd(va[3],vb));
 			
                  }
+		      _mm_prefetch(&b[kk+1][jj],_MM_HINT_T0);
                      _mm256_store_pd(&c[ii][jj],vc[0]);
 		     _mm256_store_pd(&c[ii+1][jj],vc[1]);
 		     _mm256_store_pd(&c[ii+2][jj],vc[2]);
