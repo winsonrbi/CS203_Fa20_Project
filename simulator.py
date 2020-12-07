@@ -13,12 +13,8 @@ def loop_simulation(thread = 0):
                         for kk in range(k,int(k+(ARRAY_SIZE/n))):
                             print("va = [ a[",ii,"][",kk,"] , a[",ii,"][",kk,"] , a[",ii,"][",kk,"] ,  a[",ii,"][",kk,"] ]")
                             print("vb = [ b[",kk,"][",jj,"] , b[",kk,"][",jj+1,"] , b[",kk,"][",jj+2,"] , b[",kk,"][",jj+3,"] ]")
-                               
                             print("Multiplication Step")
                             print("  c[",ii,"][",jj,"] = c[",ii,"][",jj,"] + (a[",ii,"][",kk,"] * b[",kk,"][",jj,"])" )
-                            print("  c[",ii,"][",jj+1,"] = c[",ii,"][",jj+1,"] + (a[",ii,"][",kk,"] * b[",kk,"][",jj+1,"])" )
-                            print("  c[",ii,"][",jj+2,"] = c[",ii,"][",jj+2,"] + (a[",ii,"][",kk,"] * b[",kk,"][",jj+2,"])" )
-                            print("  c[",ii,"][",jj+3,"] = c[",ii,"][",jj+3,"] + (a[",ii,"][",kk,"] * b[",kk,"][",jj+3,"])" )
                             print("==================================================================")
     return
 
