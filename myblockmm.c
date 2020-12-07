@@ -62,61 +62,68 @@ void *mythreaded_vector_blockmm(void *t)
   int number_of_threads = tinfo.number_of_threads;
   int tid =  tinfo.tid;
   int s;
-  cpu_set_t cpuset;
-  CPU_ZERO(&cpuset);
-  CPU_SET(tid, &cpuset);
-  pthread_t thread = pthread_self();
-  pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
-  s = pthread_getaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
-  if (s != 0) 
-  {
-    fprintf(stderr, "Uh oh we didn't set the cpu affinity for our threads\n");
-  }
-  else
-  {
-    fprintf(stderr, "CPU set for thread %d\n", tid);
-  }
   double **a = tinfo.a;
   double **b = tinfo.b;
   double **c = tinfo.c;
   int ARRAY_SIZE = tinfo.array_size;
   int n = tinfo.n;
   // i is for :i
-  for(i = (ARRAY_SIZE/number_of_threads)*(tid); i < (ARRAY_SIZE/number_of_threads)*(tid+1); i+=ARRAY_SIZE/n)
+  int cpu;
+  int NUM_CPUS = 24;
+  cpu_set_t cpuset;
+  int cpu_choice;
+  for(cpu = 0; cpu < NUM_CPUS; cpu++)
   {
-    for(j = 0; j < ARRAY_SIZE; j+=(ARRAY_SIZE/n))
+    cpu_choice = (cpu + tid) %(NUM_CPUS+1); 
+    CPU_ZERO(&cpuset);
+    CPU_SET(cpu_choice, &cpuset);
+    pthread_t thread = pthread_self();
+    pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
+    //s = pthread_getaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
+    //if (s != 0) 
+    //{
+    //  fprintf(stderr, "Uh oh we didn't set the cpu affinity for our threads\n");
+    //}
+    //else
+    //{
+    //  fprintf(stderr, "CPU set for thread %d\n", tid);
+    //}
+    for(i = (ARRAY_SIZE/number_of_threads)*(tid); i < (ARRAY_SIZE/number_of_threads)*(tid+1); i+=ARRAY_SIZE/n)
     {
-      for(k = 0; k < ARRAY_SIZE; k+=(ARRAY_SIZE/n))
-      {        
-         for(ii = i; ii < i+(ARRAY_SIZE/n); ii = ii + 4)
-         {
-            for(jj = j; jj < j+(ARRAY_SIZE/n); jj+=VECTOR_WIDTH)
-            {
-                    vc[0] = _mm256_load_pd(&c[ii][jj]);
-                    vc[1] = _mm256_load_pd(&c[ii+1][jj]);
-                    vc[2] = _mm256_load_pd(&c[ii+2][jj]);
-                    vc[3]= _mm256_load_pd(&c[ii+3][jj]);
+      for(j = 0; j < ARRAY_SIZE; j+=(ARRAY_SIZE/n))
+      {
+        for(k = 0; k < ARRAY_SIZE; k+=(ARRAY_SIZE/n))
+        {        
+           for(ii = i; ii < i+(ARRAY_SIZE/n); ii = ii + 4)
+           {
+              for(jj = j; jj < j+(ARRAY_SIZE/n); jj+=VECTOR_WIDTH)
+              {
+                      vc[0] = _mm256_load_pd(&c[ii][jj]);
+                      vc[1] = _mm256_load_pd(&c[ii+1][jj]);
+                      vc[2] = _mm256_load_pd(&c[ii+2][jj]);
+                      vc[3]= _mm256_load_pd(&c[ii+3][jj]);
 
-                for(kk = k; kk < k+(ARRAY_SIZE/n); kk++)
-                {
-                        va[0] = _mm256_broadcast_sd(&a[ii][kk]);
-                        va[1] = _mm256_broadcast_sd(&a[ii+1][kk]);
-                        va[2] = _mm256_broadcast_sd(&a[ii+2][kk]);
-                        va[3] = _mm256_broadcast_sd(&a[ii+3][kk]);
-			vb = _mm256_load_pd(&b[kk][jj]);
-                        vc[0] = _mm256_add_pd(vc[0],_mm256_mul_pd(va[0],vb));
-                        vc[1] = _mm256_add_pd(vc[1],_mm256_mul_pd(va[1],vb));
-                        vc[2] = _mm256_add_pd(vc[2],_mm256_mul_pd(va[2],vb));
-                        vc[3] = _mm256_add_pd(vc[3],_mm256_mul_pd(va[3],vb));
-			
-                 }
-                     _mm256_store_pd(&c[ii][jj],vc[0]);
-		     _mm256_store_pd(&c[ii+1][jj],vc[1]);
-		     _mm256_store_pd(&c[ii+2][jj],vc[2]);
-		     _mm256_store_pd(&c[ii+3][jj],vc[3]);
+                  for(kk = k; kk < k+(ARRAY_SIZE/n); kk++)
+                  {
+                          va[0] = _mm256_broadcast_sd(&a[ii][kk]);
+                          va[1] = _mm256_broadcast_sd(&a[ii+1][kk]);
+                          va[2] = _mm256_broadcast_sd(&a[ii+2][kk]);
+                          va[3] = _mm256_broadcast_sd(&a[ii+3][kk]);
+          		vb = _mm256_load_pd(&b[kk][jj]);
+                          vc[0] = _mm256_add_pd(vc[0],_mm256_mul_pd(va[0],vb));
+                          vc[1] = _mm256_add_pd(vc[1],_mm256_mul_pd(va[1],vb));
+                          vc[2] = _mm256_add_pd(vc[2],_mm256_mul_pd(va[2],vb));
+                          vc[3] = _mm256_add_pd(vc[3],_mm256_mul_pd(va[3],vb));
+          		
+                   }
+                       _mm256_store_pd(&c[ii][jj],vc[0]);
+          	     _mm256_store_pd(&c[ii+1][jj],vc[1]);
+          	     _mm256_store_pd(&c[ii+2][jj],vc[2]);
+          	     _mm256_store_pd(&c[ii+3][jj],vc[3]);
+              }
             }
-          }
+        }
       }
-    }
-  }  
+    }  
+  }
 }

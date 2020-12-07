@@ -19,8 +19,8 @@ def loop_simulation(thread = 0):
     return
 
 def loop_step_simulation(LOOPS = 11,thread = 0):
-    ARRAY_SIZE = 16
-    n = 4
+    ARRAY_SIZE = 4096
+    n = 512
     tid = thread
     number_of_threads = 4
     loop_count = 0
