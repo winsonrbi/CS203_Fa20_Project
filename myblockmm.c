@@ -80,7 +80,7 @@ void *mythreaded_vector_blockmm(void *t)
   double **b = tinfo.b;
   double **c = tinfo.c;
   int ARRAY_SIZE = tinfo.array_size;
-  int n = tinfo.n;
+  int n = (tinfo.n)/4;
   // i is for :i
   for(i = (ARRAY_SIZE/number_of_threads)*(tid); i < (ARRAY_SIZE/number_of_threads)*(tid+1); i+=ARRAY_SIZE/n)
   {
