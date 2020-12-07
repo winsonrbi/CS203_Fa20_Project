@@ -80,7 +80,8 @@ void *mythreaded_vector_blockmm(void *t)
   double **b = tinfo.b;
   double **c = tinfo.c;
   int ARRAY_SIZE = tinfo.array_size;
-  int n = (tinfo.n)/4;
+  //Optimization 3: Calculate optimal block size instead of using input
+  int n = ARRAY_SIZE/64;
   // i is for :i
   for(i = (ARRAY_SIZE/number_of_threads)*(tid); i < (ARRAY_SIZE/number_of_threads)*(tid+1); i+=ARRAY_SIZE/n)
   {
@@ -92,6 +93,7 @@ void *mythreaded_vector_blockmm(void *t)
          {
             for(jj = j; jj < j+(ARRAY_SIZE/n); jj+=VECTOR_WIDTH)
             {
+		    //Optimization 1: Re-use B for multiple calculations
                     vc[0] = _mm256_load_pd(&c[ii][jj]);
                     vc[1] = _mm256_load_pd(&c[ii+1][jj]);
                     vc[2] = _mm256_load_pd(&c[ii+2][jj]);
@@ -110,7 +112,8 @@ void *mythreaded_vector_blockmm(void *t)
                         vc[3] = _mm256_add_pd(vc[3],_mm256_mul_pd(va[3],vb));
 			
                  }
-		      _mm_prefetch(&b[kk+1][jj],_MM_HINT_T0);
+                     //Optimization 2: Attempt to prefetch next B elements
+		     _mm_prefetch(&b[kk+1][jj],_MM_HINT_T0);
                      _mm256_store_pd(&c[ii][jj],vc[0]);
 		     _mm256_store_pd(&c[ii+1][jj],vc[1]);
 		     _mm256_store_pd(&c[ii+2][jj],vc[2]);
