@@ -87,7 +87,7 @@ void *mythreaded_vector_blockmm(void *t)
     n = ARRAY_SIZE/64;
   }
   else{
-   n = ARRAY_SIZE/8; 
+   n = tinfo.n; 
   }
   // i is for :i
   for(i = (ARRAY_SIZE/number_of_threads)*(tid); i < (ARRAY_SIZE/number_of_threads)*(tid+1); i+=ARRAY_SIZE/n)
