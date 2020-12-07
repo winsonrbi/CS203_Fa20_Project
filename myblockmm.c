@@ -82,6 +82,7 @@ void *mythreaded_vector_blockmm(void *t)
                         vb = _mm256_load_pd(&b[kk][jj]);
                         vc = _mm256_add_pd(vc,_mm256_mul_pd(va,vb));
                  }
+		     _mm_prefetch(&b[kk+1][jj],_MM_HINT_T0);
                      _mm256_store_pd(&c[ii][jj],vc);
             }
           }
